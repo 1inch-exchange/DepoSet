@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-truffle-box": {
+    "deposet": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -48,18 +48,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-truffle-box:build"
+            "browserTarget": "deposet:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "angular-truffle-box:build:production"
+              "browserTarget": "deposet:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-truffle-box:build"
+            "browserTarget": "deposet:build"
           }
         },
         "test": {
@@ -91,7 +91,7 @@
         }
       }
     },
-    "angular-truffle-box-e2e": {
+    "deposet-e2e": {
       "root": "e2e",
       "sourceRoot": "e2e",
       "projectType": "application",
@@ -100,7 +100,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "angular-truffle-box:serve"
+            "devServerTarget": "deposet:serve"
           }
         },
         "lint": {
@@ -115,7 +115,7 @@
       }
     }
   },
-  "defaultProject": "angular-truffle-box",
+  "defaultProject": "deposet",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
