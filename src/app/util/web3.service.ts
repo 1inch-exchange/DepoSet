@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import * as contract from 'truffle-contract';
 import {Subject} from 'rxjs';
 
 declare let require: any;
@@ -36,17 +35,6 @@ export class Web3Service {
     }
 
     setInterval(() => this.refreshAccounts(), 100);
-  }
-
-  public async artifactsToContract(artifacts, address: string) {
-    if (!this.web3) {
-      const delay = new Promise(resolve => setTimeout(resolve, 100));
-      await delay;
-
-      return await this.artifactsToContract(artifacts, address);
-    }
-
-    return new this.web3.eth.Contract(artifacts, address);
   }
 
   private refreshAccounts() {

@@ -15,14 +15,44 @@
     </div>
     <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
       {{token.name}} <img [src]="token.icon"> &nbsp;<span>{{token.balance | number: '1.4-4'}}</span>&nbsp;
-      <p-button label="+" (onClick)="buyToken(token)" styleClass="ui-button-info ui-button-rounded"></p-button>
-      <p-button label="-" (onClick)="sellToken(token)" styleClass="ui-button-danger ui-button-rounded"></p-button>
+      <p-button label="+" (onClick)="showBuyDialog(token)" styleClass="ui-button-info"></p-button>
+      <p-button label="-" (onClick)="showSellDialog(token)" [disabled]="token.allowance == 0" styleClass="ui-button-danger"></p-button>
+      <p-button label="V" (onClick)="approveToken(token)" [disabled]="token.allowance > 0" styleClass="ui-button-sucess"></p-button>
     </div>
   </div>
 </p-card>
 
-<p-dialog header="Buy" [(visible)]="display">
-  Buy a token.
+<p-dialog [header]="displayBuyDialogTitle" [(visible)]="displayBuyDialog">
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
+      <div class="ui-inputgroup">
+        <span class="ui-inputgroup-addon" style="font-size: 24px;"><fa-icon [icon]="['fab', 'ethereum']"></fa-icon></span>
+        <input type="text" pInputText pKeyFilter="num" style="font-size: 24px;" [(ngModel)]="buy_amount" placeholder="Amount in Ether"/>
+      </div>
+
+    </div>
+    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
+      <p-button label="BUY" (onClick)="buy()" styleClass="ui-button-info"></p-button>
+    </div>
+  </div>
+</p-dialog>
+
+
+<p-dialog [header]="displaySellDialogTitle" [(visible)]="displaySellDialog">
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
+      <div class="ui-inputgroup">
+        <span class="ui-inputgroup-addon" style="font-size: 24px;">
+          <img [src]="selected_token.icon">
+        </span>
+        <input type="text" pInputText pKeyFilter="num" style="font-size: 24px;" [(ngModel)]="buy_amount" placeholder="Amount in {{selected_token.name}}"/>
+      </div>
+
+    </div>
+    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
+      <p-button label="Sell" (onClick)="sell()" styleClass="ui-button-danger"></p-button>
+    </div>
+  </div>
 </p-dialog>
 
 

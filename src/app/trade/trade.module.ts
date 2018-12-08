@@ -11,7 +11,7 @@ import {
   CodeHighlighterModule,
   DialogModule,
   DropdownModule,
-  InputTextModule,
+  InputTextModule, KeyFilterModule,
   TabViewModule
 } from 'primeng/primeng';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
@@ -33,7 +33,8 @@ import {BrowserModule} from '@angular/platform-browser';
     FontAwesomeModule,
     DropdownModule,
     CardModule,
-    DialogModule
+    DialogModule,
+    KeyFilterModule
   ],
   declarations: [TradeFormComponent],
   exports: [TradeFormComponent]

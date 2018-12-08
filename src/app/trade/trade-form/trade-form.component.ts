@@ -10,13 +10,15 @@ import {SelectItem} from 'primeng/api';
 library.add(fas, far, fab);
 
 declare let require: any;
-const artifacts = require('./BalanceOfABI.json');
+const tokenbArtifacts = require('./TokenABI.json');
+const proxyArtifacts = require('./ProxyABI.json');
 
 interface Token {
   address: string;
   icon: string;
   name: string;
   balance: Number;
+  allowance: number;
 }
 
 @Component({
@@ -26,7 +28,14 @@ interface Token {
 })
 export class TradeFormComponent implements OnInit {
 
-  display = false;
+  proxySmartContractAddress = '0x47739Ff19b02E13CD216C17B8F64ef09191D9Ec8';
+  kyberNetworkContractAddress = '0x818e6fecd516ecc3849daf6845e3ec868087b755';
+
+  displayBuyDialog = false;
+  displaySellDialog = false;
+  buy_amount = '0.01';
+  sell_amount = '0.0';
+  selected_token: Token;
 
   accounts: SelectItem[] = [];
   tokens: Token[] = [
@@ -35,18 +44,21 @@ export class TradeFormComponent implements OnInit {
       icon: 'https://s3.amazonaws.com/set-core/img/set-icons/ethx_icon.svg',
       name: 'EthereumX',
       balance: Number(0),
+      allowance: 0
     },
     {
       address: '0x02ec0c9e6d3c08b8fb12fec51ccba048afbc36a6',
       icon: 'https://s3.amazonaws.com/set-core/img/set-icons/stableset.svg',
       name: 'StableSet',
       balance: Number(0),
+      allowance: 0
     },
     {
       address: '0xf860f90e1f55e3528682e18850612cbb45bbf1bc',
       icon: 'https://s3.amazonaws.com/set-core/img/set-icons/dex_icon.svg',
       name: 'DEXSet',
       balance: Number(0),
+      allowance: 0
     },
   ];
 
@@ -64,6 +76,9 @@ export class TradeFormComponent implements OnInit {
     account: ''
   };
 
+  displayBuyDialogTitle = '';
+  displaySellDialogTitle = '';
+
   status = '';
 
   constructor(private web3Service: Web3Service) {
@@ -77,10 +92,26 @@ export class TradeFormComponent implements OnInit {
     this.watchAccount();
     this.watchTokenBalances();
     this.watchWalletBalances();
+    this.getAllowance();
+
+    this.selected_token = this.tokens[0];
   }
 
-  showDialog() {
-    this.display = true;
+  showBuyDialog(token: Token) {
+    this.selected_token = token;
+    this.displayBuyDialogTitle = 'Buy ' + token.name + ' Token';
+    this.displayBuyDialog = true;
+  }
+
+  showSellDialog(token: Token) {
+    this.selected_token = token;
+    this.displaySellDialogTitle = 'Sell ' + token.name + ' Token';
+    this.displaySellDialog = true;
+  }
+
+  closeDialog() {
+    this.displayBuyDialog = false;
+    this.displaySellDialog = false;
   }
 
   watchAccount() {
@@ -101,13 +132,40 @@ export class TradeFormComponent implements OnInit {
     });
   }
 
+  async getAllowance() {
+
+    if (!this.web3Service.web3 || !this.model.account || !this.tokens ) {
+      const delay = new Promise(resolve => setTimeout(resolve, 100));
+      await delay;
+
+      return await this.getAllowance();
+    }
+
+    for (let i = 0; i < this.tokens.length; i++) {
+      try {
+        const contract = new this.web3Service.web3.eth.Contract(tokenbArtifacts, this.tokens[i].address);
+
+        this.tokens[i].allowance = await contract.methods
+          .allowance(this.model.account, this.proxySmartContractAddress)
+          .call();
+
+    //    console.log('Allowance: ', this.tokens[i], this.tokens[i].allowance);
+      } catch (e) {
+        console.log(e);
+        // this.setStatus('Error getting balance; see log.');
+      }
+    }
+
+    setTimeout(() => this.getAllowance(), 1000);
+  }
+
   async watchTokenBalances() {
 
     for (let i = 0; i < this.tokens.length; i++) {
       this.tokens[i].balance = await this.getTokenBalance(this.tokens[i].address);
     }
 
-    setTimeout(() => this.watchTokenBalances(), 10000);
+    setTimeout(() => this.watchTokenBalances(), 1000);
   }
 
   async watchWalletBalances() {
@@ -126,39 +184,35 @@ export class TradeFormComponent implements OnInit {
       'ether'
     ));
 
-    console.log('Wallet Balance', this.model.balance);
+    // console.log('Wallet Balance', this.model.balance);
 
-    setTimeout(() => this.watchWalletBalances(), 10000);
+    setTimeout(() => this.watchWalletBalances(), 1000);
   }
 
   setStatus(status) {
     console.log('Status', status);
   }
 
-  async sendCoin() {
-    if (!this.BalanceOfToken) {
-      this.setStatus('Metacoin is not loaded, unable to send transaction');
-      return;
+  async approveToken(token: Token) {
+
+    if (!this.web3Service.web3 || !this.model.account) {
+      const delay = new Promise(resolve => setTimeout(resolve, 100));
+      await delay;
+
+      return await this.approveToken(token);
     }
 
-    const amount = this.model.amount;
-    const receiver = this.model.receiver;
+    const contract = new this.web3Service.web3.eth.Contract(tokenbArtifacts, token.address);
 
-    console.log('Sending coins' + amount + ' to ' + receiver);
-
-    this.setStatus('Initiating transaction... (please wait)');
     try {
-      const deployedBalanceOfToken = await this.BalanceOfToken.deployed();
-      const transaction = await deployedBalanceOfToken.sendCoin.sendTransaction(receiver, amount, {from: this.model.account});
-
-      if (!transaction) {
-        this.setStatus('Transaction failed!');
-      } else {
-        this.setStatus('Transaction complete!');
-      }
+      await contract.methods
+        .approve(this.proxySmartContractAddress, this.web3Service.web3.utils.toHex(this.web3Service.web3.utils.toBN(2).pow(this.web3Service.web3.utils.toBN(255))))
+        .send({
+          from: this.model.account
+        });
     } catch (e) {
       console.log(e);
-      this.setStatus('Error sending coin; see log.');
+      // this.setStatus('Error! See log.');
     }
   }
 
@@ -174,23 +228,73 @@ export class TradeFormComponent implements OnInit {
 //    console.log('Refreshing balance');
     let balance;
 
-    const contract = await this.web3Service.artifactsToContract(artifacts, address);
+    const contract = new this.web3Service.web3.eth.Contract(tokenbArtifacts, address);
 
     try {
       balance = await contract.methods
         .balanceOf(this.model.account)
         .call();
 
-      console.log('Token balance', address, balance);
+      // console.log('Token balance', address, balance);
     } catch (e) {
-      console.log(e);
-      this.setStatus('Error getting balance; see log.');
+      // console.log(e);
+      // this.setStatus('Error getting balance; see log.');
     }
 
     return Number(this.web3Service.web3.utils.fromWei(
       balance || '0',
       'ether'
     ));
+  }
+
+  async buy() {
+
+    this.closeDialog();
+
+    try {
+      const proxyContract = new this.web3Service.web3.eth.Contract(proxyArtifacts, this.proxySmartContractAddress);
+
+      const result = await proxyContract.methods
+        .buy(this.selected_token.address, this.kyberNetworkContractAddress)
+        .send({
+          value: this.web3Service.web3.utils.toWei(
+            this.buy_amount
+          ),
+          from: this.model.account
+        });
+
+      console.log('Buy result', result);
+    } catch (e) {
+      console.log(e);
+      alert('Error: ' + e);
+    }
+  }
+
+
+  async sell() {
+
+    this.closeDialog();
+
+    try {
+      const proxyContract = new this.web3Service.web3.eth.Contract(proxyArtifacts, this.proxySmartContractAddress);
+
+      const result = await proxyContract.methods
+        .sell(
+          this.selected_token.address,
+          this.web3Service.web3.utils.toWei(
+            this.sell_amount
+          ),
+          this.kyberNetworkContractAddress
+        )
+        .send({
+          from: this.model.account
+        });
+
+      console.log('Buy result', result);
+    } catch (e) {
+      console.log(e);
+      alert('Error: ' + e);
+    }
   }
 
   setAmount(e) {
