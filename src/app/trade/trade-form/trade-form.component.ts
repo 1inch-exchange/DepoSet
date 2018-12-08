@@ -28,7 +28,7 @@ interface Token {
 })
 export class TradeFormComponent implements OnInit {
 
-  proxySmartContractAddress = '0x47739Ff19b02E13CD216C17B8F64ef09191D9Ec8';
+  proxySmartContractAddress = '0xd079ACF6491bBF8bBbbee6a5D73EAa0DCEdeC0c2';
   kyberNetworkContractAddress = '0x818e6fecd516ecc3849daf6845e3ec868087b755';
 
   displayBuyDialog = false;
@@ -134,7 +134,7 @@ export class TradeFormComponent implements OnInit {
 
   async getAllowance() {
 
-    if (!this.web3Service.web3 || !this.model.account || !this.tokens ) {
+    if (!this.web3Service.web3 || !this.model.account || !this.tokens) {
       const delay = new Promise(resolve => setTimeout(resolve, 100));
       await delay;
 
@@ -149,7 +149,7 @@ export class TradeFormComponent implements OnInit {
           .allowance(this.model.account, this.proxySmartContractAddress)
           .call();
 
-    //    console.log('Allowance: ', this.tokens[i], this.tokens[i].allowance);
+        //    console.log('Allowance: ', this.tokens[i], this.tokens[i].allowance);
       } catch (e) {
         console.log(e);
         // this.setStatus('Error getting balance; see log.');
@@ -206,7 +206,10 @@ export class TradeFormComponent implements OnInit {
 
     try {
       await contract.methods
-        .approve(this.proxySmartContractAddress, this.web3Service.web3.utils.toHex(this.web3Service.web3.utils.toBN(2).pow(this.web3Service.web3.utils.toBN(255))))
+        .approve(
+          this.proxySmartContractAddress,
+          this.web3Service.web3.utils.toHex(this.web3Service.web3.utils.toBN(2).pow(this.web3Service.web3.utils.toBN(255)))
+        )
         .send({
           from: this.model.account
         });
