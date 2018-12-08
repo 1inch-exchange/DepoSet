@@ -275,7 +275,7 @@ contract SetBuyer {
         address[] memory components = set.getComponents();
         uint256[] memory units = set.getUnits();
 
-        uint256 bestAmount = uint(-1);
+        uint256 fitAmount = uint(-1);
         for (uint i = 0; i < components.length; i++) {
             IERC20 token = IERC20(components[i]);
             if (token.allowance(this, set) == 0) {
@@ -283,17 +283,47 @@ contract SetBuyer {
             }
 
             uint256 amount = token.balanceOf(this).div(units[i]);
-            if (amount < bestAmount) {
-                bestAmount = amount;
+            if (amount < fitAmount) {
+                fitAmount = amount;
             }
         }
 
-        set.mint(msg.sender, bestAmount);
+        set.mint(msg.sender, fitAmount);
+
         if (address(this).balance > 0) {
             msg.sender.transfer(address(this).balance);
         }
         for (i = 0; i < components.length; i++) {
             token = IERC20(components[i]);
+            if (token.balanceOf(this) > 0) {
+                require(token.transfer(msg.sender, token.balanceOf(this)), "transfer failed");
+            }
+        }
+    }
+
+    function() public payable {
+        require(tx.origin != msg.sender);
+    }
+
+    function sell(
+        ISetToken set,
+        uint256 amount,
+        bytes callDatas,
+        uint[] starts // including 0 and LENGTH values
+    )
+        public
+    {
+        set.burn(msg.sender, amount);
+
+        change(callDatas, starts);
+
+        address[] memory components = set.getComponents();
+
+        if (address(this).balance > 0) {
+            msg.sender.transfer(address(this).balance);
+        }
+        for (uint i = 0; i < components.length; i++) {
+            IERC20 token = IERC20(components[i]);
             if (token.balanceOf(this) > 0) {
                 require(token.transfer(msg.sender, token.balanceOf(this)), "transfer failed");
             }
