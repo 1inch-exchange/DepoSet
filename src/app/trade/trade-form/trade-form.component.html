@@ -1,0 +1,29 @@
+<p-card header="Your Wallet">
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
+      <p-dropdown [options]="accounts" [(ngModel)]="model.account" autoWidth></p-dropdown>
+    </div>
+    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
+      <fa-icon [icon]="['fab', 'ethereum']"></fa-icon>&nbsp;<span>{{model.balance | number: '1.4-4'}}</span>
+    </div>
+  </div>
+  <hr>
+  <h2 style="margin-bottom: 5px;">Tokens</h2>
+  <div class="ui-g" *ngFor="let token of tokens">
+    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
+      <input type="text" pInputText [value]="token.address" disabled style="width: 400px;"/>
+    </div>
+    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
+      {{token.name}} <img [src]="token.icon"> &nbsp;<span>{{token.balance | number: '1.4-4'}}</span>&nbsp;
+      <p-button label="+" (onClick)="buyToken(token)" styleClass="ui-button-info ui-button-rounded"></p-button>
+      <p-button label="-" (onClick)="sellToken(token)" styleClass="ui-button-danger ui-button-rounded"></p-button>
+    </div>
+  </div>
+</p-card>
+
+<p-dialog header="Buy" [(visible)]="display">
+  Buy a token.
+</p-dialog>
+
+
+
