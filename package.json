@@ -9,7 +9,8 @@
     "test": "ng test --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "node patch.js"
+    "postinstall": "node patch.js",
+    "dist": "truffle-flattener ./contracts/SetBuyer.sol > SetBuyer.full.sol && solcjs --bin --abi --optimize SetBuyer.full.sol && mv SetBuyer_full_sol_SetBuyer.bin SetBuyer.full.bin && mv SetBuyer_full_sol_SetBuyer.abi SetBuyer.full.abi && rm SetBuyer_full_*"
   },
   "private": true,
   "dependencies": {
@@ -50,6 +51,7 @@
     "@types/jasminewd2": "^2.0.6",
     "@types/node": "^6.14.2",
     "codelyzer": "^4.4.4",
+    "ganache-cli": "^6.2.3",
     "jasmine-core": "^2.99.1",
     "jasmine-spec-reporter": "^4.2.1",
     "karma": "^3.1.1",
@@ -58,9 +60,12 @@
     "karma-coverage-istanbul-reporter": "^1.4.3",
     "karma-jasmine": "^1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "openzeppelin-solidity": "^2.0.0",
     "protractor": "^5.4.1",
     "protractor-console-plugin": "^0.1.1",
+    "truffle": "^4.1.14",
     "truffle-contract": "^3.0.6",
+    "truffle-flattener": "^1.2.10",
     "ts-node": "^3.3.0",
     "tslint": "^5.11.0",
     "typescript": "3.1.6",
