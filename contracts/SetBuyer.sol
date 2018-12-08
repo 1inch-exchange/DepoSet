@@ -125,7 +125,7 @@ contract SetBuyer {
 
             kyber.tradeWithHint(
                 components[i],
-                amount,
+                token.balanceOf(this),
                 ETHER_ADDRESS,
                 this,
                 1 << 255,
