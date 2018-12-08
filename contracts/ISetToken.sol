@@ -16,6 +16,7 @@
 
 pragma solidity ^0.4.24;
 
+
 /**
  * @title ISetToken
  * @author Set Protocol
@@ -26,6 +27,22 @@ pragma solidity ^0.4.24;
 interface ISetToken {
 
     /* ============ External Functions ============ */
+
+    /*
+     * Issue token set
+     *
+     * @param  amount     Amount of set being issued
+     */
+    function issue(uint256 amount)
+        external;
+
+    /*
+     * Redeem token set
+     *
+     * @param  amount     Amount of set being redeemed
+     */
+    function redeem(uint256 amount)
+        external;
 
     /*
      * Get natural unit of Set
@@ -97,6 +114,19 @@ interface ISetToken {
         external;
 
     /**
+    * Balance of token for a specified address
+    *
+    * @param who  The address
+    * @return uint256 Balance of address
+    */
+    function balanceOf(
+        address who
+    )
+        external
+        view
+        returns (uint256);
+
+    /**
     * Transfer token for a specified address
     *
     * @param to The address to transfer to.
@@ -106,5 +136,21 @@ interface ISetToken {
         address to,
         uint256 value
     )
-        external;
+        external
+        returns (bool);
+
+    /**
+    * Transfer token for a specified address
+    *
+    * @param from The address to transfer from.
+    * @param to The address to transfer to.
+    * @param value The amount to be transferred.
+    */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    )
+        external
+        returns (bool);
 }
