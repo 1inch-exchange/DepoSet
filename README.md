@@ -14,6 +14,6 @@ Logo: https://www.svgrepo.com/svg/193172/gas-mask
 ``yarn run start``
 
 # Deployed on IPFS
-https://gateway.ipfs.io/ipfs/QmPVQKJ54nYsM7SGmLVq7uZ4bcPwhHjsBxUhT3bbdvknSF/
+https://gateway.ipfs.io/ipfs/QmaGAxWTC1Eqe65HPZsGJUch4vMBWgMHRmH9gGXh9rdFU9/
 
 ###### Created by Crypto Maniacs 2018
