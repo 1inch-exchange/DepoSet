@@ -4,35 +4,40 @@
       <p-dropdown [options]="accounts" [(ngModel)]="model.account" autoWidth></p-dropdown>
     </div>
     <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
-      <fa-icon [icon]="['fab', 'ethereum']"></fa-icon>&nbsp;<span>{{model.balance | number: '1.4-4'}}</span>
+      <fa-icon [icon]="['fab', 'ethereum']"></fa-icon>&nbsp;<span>{{model.balance | number: '1.5-5'}}</span>
     </div>
   </div>
   <hr>
   <h2 style="margin-bottom: 5px;">Tokens</h2>
   <div class="ui-g" *ngFor="let token of tokens">
-    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
+    <div class="ui-g-12 ui-md-5" style="font-size: 32px;">
       <input type="text" pInputText [value]="token.address" disabled style="width: 400px;"/>
     </div>
-    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
-      {{token.name}} <img [src]="token.icon"> &nbsp;<span>{{token.balance | number: '1.4-4'}}</span>&nbsp;
-      <p-button label="+" (onClick)="showBuyDialog(token)" styleClass="ui-button-info"></p-button>
-      <p-button label="-" (onClick)="showSellDialog(token)" [disabled]="token.allowance == 0" styleClass="ui-button-danger"></p-button>
-      <p-button label="V" (onClick)="approveToken(token)" [disabled]="token.allowance > 0" styleClass="ui-button-sucess"></p-button>
+    <div class="ui-g-12 ui-md-7" style="text-align: right; font-size: 32px;">
+      {{token.name}} <img [src]="token.icon"> &nbsp;<span>{{token.balance | number: '1.5-5'}}</span>&nbsp;
+      <p-button label="+" (onClick)="showBuyDialog(token)" styleClass="ui-button-info" style="margin-right: 5px;"></p-button>
+      <p-button label="-" (onClick)="showSellDialog(token)" [disabled]="token.allowance == 0" style="margin-right: 5px;" styleClass="ui-button-danger"></p-button>
+      <p-button label="✓" (onClick)="approveToken(token)" [disabled]="token.allowance > 0" style="margin-right: 5px;" styleClass="ui-button-sucess"></p-button>
     </div>
   </div>
 </p-card>
 
 <p-dialog [header]="displayBuyDialogTitle" [(visible)]="displayBuyDialog">
   <div class="ui-g">
-    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
-      <div class="ui-inputgroup">
-        <span class="ui-inputgroup-addon" style="font-size: 24px;"><fa-icon [icon]="['fab', 'ethereum']"></fa-icon></span>
-        <input type="text" pInputText pKeyFilter="num" style="font-size: 24px;" [(ngModel)]="buy_amount" placeholder="Amount in Ether"/>
-      </div>
-
+    <div class="ui-g-12 ui-md-2" style="font-size: 24px;">
+      <fa-icon [icon]="['fab', 'ethereum']"></fa-icon>
     </div>
-    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
-      <p-button label="BUY" (onClick)="buy()" styleClass="ui-button-info"></p-button>
+    <div class="ui-g-12 ui-md-7">
+      <input type="text" pInputText required pKeyFilter="num" [(ngModel)]="buy_amount" placeholder="Amount in Ether"/>
+    </div>
+    <div class="ui-g-12 ui-md-3">
+      <p-button label="Buy" (onClick)="buy()" styleClass="ui-button-info"></p-button>
+    </div>
+  </div>
+
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-12" style="text-align: right;">
+      <a (click)="buy_amount=model.balance" style="cursor: pointer;">MAX</a>
     </div>
   </div>
 </p-dialog>
@@ -40,17 +45,20 @@
 
 <p-dialog [header]="displaySellDialogTitle" [(visible)]="displaySellDialog">
   <div class="ui-g">
-    <div class="ui-g-12 ui-md-6" style="font-size: 32px;">
-      <div class="ui-inputgroup">
-        <span class="ui-inputgroup-addon" style="font-size: 24px;">
-          <img [src]="selected_token.icon">
-        </span>
-        <input type="text" pInputText pKeyFilter="num" style="font-size: 24px;" [(ngModel)]="sell_amount" placeholder="Amount in {{selected_token.name}}"/>
-      </div>
-
+    <div class="ui-g-12 ui-md-2">
+      <img [src]="selected_token.icon">
     </div>
-    <div class="ui-g-12 ui-md-6" style="text-align: right; font-size: 32px;">
+    <div class="ui-g-12 ui-md-7">
+      <input type="text" pInputText required pKeyFilter="num" [(ngModel)]="sell_amount" placeholder="Amount in {{selected_token.name}}"/>
+    </div>
+    <div class="ui-g-12 ui-md-3">
       <p-button label="Sell" (onClick)="sell()" styleClass="ui-button-danger"></p-button>
+    </div>
+  </div>
+
+  <div class="ui-g">
+    <div class="ui-g-12 ui-md-12" style="text-align: right;">
+      <a (click)="sell_amount=selected_token.balance" style="cursor: pointer;">MAX</a>
     </div>
   </div>
 </p-dialog>

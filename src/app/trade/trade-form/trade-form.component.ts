@@ -33,7 +33,7 @@ export class TradeFormComponent implements OnInit {
 
   displayBuyDialog = false;
   displaySellDialog = false;
-  buy_amount = '0.01';
+  buy_amount = '0.0';
   sell_amount = '0.0';
   selected_token: Token;
 
@@ -98,12 +98,16 @@ export class TradeFormComponent implements OnInit {
   }
 
   showBuyDialog(token: Token) {
+    this.closeDialog();
+
     this.selected_token = token;
     this.displayBuyDialogTitle = 'Buy ' + token.name + ' Token';
     this.displayBuyDialog = true;
   }
 
   showSellDialog(token: Token) {
+    this.closeDialog();
+
     this.selected_token = token;
     this.displaySellDialogTitle = 'Sell ' + token.name + ' Token';
     this.displaySellDialog = true;
